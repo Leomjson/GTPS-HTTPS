@@ -73,7 +73,7 @@ void append_reset(string ip) {
 		this_thread::sleep_for(1ms);
 	}
 }
-bool request(const httplib::Request req, httplib::Response res)
+bool request(const req req, res res)
 {
 	ifstream r("https/connection/" + req.remote_addr);
 	if (not r.is_open()) {
