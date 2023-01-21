@@ -18,3 +18,6 @@ Change "55231" to the ENet Port (found in your GTPS project)
 Go to **x64/release** folder, then create a folder called **https** then another folder inside it called **connection**. This folder will log connection information.
 Then go back to **x64/release** folder and copy and paste the content(s) in **DLL** folder and paste it inside the **x64/release** folder.
 Once you've done that run **https.exe**
+
+## Problem?
+If you can't connect to your GTPS then make sure to go to **issues** in the github repo and create a new issue describing your problem.
