@@ -105,12 +105,19 @@ int main()
 {
 	server.Post(("/growtopia/server_data.php"), [&](const req& req, res& res) {
 		future<bool> Request = async(request, req, res); Request.wait();
-	if (not Request.get()) return;
+	if (not Request.get()) {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cerr << req.remote_addr << " was rejected" << endl;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+		return;
+	}
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	cerr << req.remote_addr << " has connected" << endl;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 	res.set_content(server_data, "text/plain");
 		});
-	server.Get(("/growtopia/server_data.php"), [&](const req& req, res& res) {
-		res.set_content(gov, "text/html");
-		});
+	server.Get(("/growtopia/server_data.php"), [&](const req& req, res& res) { res.set_content(gov, "text/html"); });
+	server.Get(("/cache"), [&](const req& req, res& res) { res.set_content(gov, "text/html"); });
 	server.listen("0.0.0.0", 443);
 	while (server.is_running());
 	return 0; // program ends
