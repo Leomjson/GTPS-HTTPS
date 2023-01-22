@@ -20,5 +20,8 @@ Go to **x64/release** folder, then create a folder called **https** then another
 Then go back to **x64/release** folder and copy and paste the content(s) in **DLL** folder and paste it inside the **x64/release** folder.
 Once you've done that run **https.exe**
 
-## Problem?
-If you can't connect to your GTPS then make sure to go to **issues** in the github repo and create a new issue describing your problem.
+# Change log
+01.01.02 - removed redundant code
+01.01.03 - Console Logging
+
+![image](https://user-images.githubusercontent.com/89754898/213895030-5cf61c6b-8a30-499c-9ff4-430668941257.png)
