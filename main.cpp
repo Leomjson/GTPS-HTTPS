@@ -24,7 +24,8 @@ port|55231
 type|1
 meta|cmeta
 RTENDMARKERBS1001)";
-const char* gov = R"(<style>h1 {
+const char* gov = 
+R"(<style>h1 {
 text-align: center;
 } 
 </style> 
@@ -35,13 +36,12 @@ class connection
 {
 public:
 	string ip = "";
-	int attempts = 0; // this will act as the HTTPS stressor
+	int attempts = 0;
 	bool timeout = false;
-	bool new_connection = false;
 };
 map<string, connection> connection_data;
 void SaveConnectionData(connection data, string ip) {
-	ofstream w("https/connection/" + ip);
+	ofstream w("connection/" + ip);
 	nlohmann::json j; j.dump(1);
 	j["ip"] = data.ip;
 	j["attempts"] = data.attempts;
@@ -49,7 +49,7 @@ void SaveConnectionData(connection data, string ip) {
 	w << setw(2) << j;
 }
 connection LoadConnectionData(string ip) {
-	ifstream r("https/connection/" + ip);
+	ifstream r("connection/" + ip);
 	nlohmann::json j; r >> j;
 	connection data;
 	data.ip = j["ip"];
@@ -75,12 +75,11 @@ void append_reset(string ip) {
 }
 bool request(const req req, res res)
 {
-	ifstream r("https/connection/" + req.remote_addr);
+	ifstream r("connection/" + req.remote_addr);
 	if (not r.is_open()) {
 		connection new_data;
 		new_data.ip = req.remote_addr;
 		new_data.attempts = 1;
-		new_data.new_connection = false;
 		SaveConnectionData(new_data, req.remote_addr);
 		connection_data.emplace(req.remote_addr, new_data);
 	}
@@ -114,7 +113,5 @@ int main()
 		});
 	server.listen("0.0.0.0", 443);
 	while (server.is_running());
-	backtasks.clear();
-	server.stop();
 	return 0; // program ends
 }
