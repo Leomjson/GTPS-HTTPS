@@ -1,12 +1,3 @@
-/*
- * Copyright 1995-2019 The OpenSSL Project Authors. All Rights Reserved.
- *
- * Licensed under the OpenSSL license (the "License").  You may not use
- * this file except in compliance with the License.  You can obtain a copy
- * in the file LICENSE in the source distribution or at
- * https://www.openssl.org/source/license.html
- */
-
 #ifndef HEADER_ENVELOPE_H
 # define HEADER_ENVELOPE_H
 
@@ -16,13 +7,12 @@
 # include <openssl/bio.h>
 # include <openssl/evperr.h>
 
-# define EVP_MAX_MD_SIZE                 64/* longest known is SHA512 */
+# define EVP_MAX_MD_SIZE                 64     
 # define EVP_MAX_KEY_LENGTH              64
 # define EVP_MAX_IV_LENGTH               16
 # define EVP_MAX_BLOCK_LENGTH            32
 
 # define PKCS5_SALT_LEN                  8
-/* Default PKCS#5 iteration count */
 # define PKCS5_DEFAULT_ITER              2048
 
 # include <openssl/objects.h>
@@ -109,79 +99,39 @@ int (*EVP_MD_meth_get_cleanup(const EVP_MD *md))(EVP_MD_CTX *ctx);
 int (*EVP_MD_meth_get_ctrl(const EVP_MD *md))(EVP_MD_CTX *ctx, int cmd,
                                               int p1, void *p2);
 
-/* digest can only handle a single block */
 #  define EVP_MD_FLAG_ONESHOT     0x0001
 
-/* digest is extensible-output function, XOF */
 #  define EVP_MD_FLAG_XOF         0x0002
-
-/* DigestAlgorithmIdentifier flags... */
 
 #  define EVP_MD_FLAG_DIGALGID_MASK               0x0018
 
-/* NULL or absent parameter accepted. Use NULL */
-
 #  define EVP_MD_FLAG_DIGALGID_NULL               0x0000
-
-/* NULL or absent parameter accepted. Use NULL for PKCS#1 otherwise absent */
 
 #  define EVP_MD_FLAG_DIGALGID_ABSENT             0x0008
 
-/* Custom handling via ctrl */
-
 #  define EVP_MD_FLAG_DIGALGID_CUSTOM             0x0018
 
-/* Note if suitable for use in FIPS mode */
 #  define EVP_MD_FLAG_FIPS        0x0400
-
-/* Digest ctrls */
 
 #  define EVP_MD_CTRL_DIGALGID                    0x1
 #  define EVP_MD_CTRL_MICALG                      0x2
 #  define EVP_MD_CTRL_XOF_LEN                     0x3
 
-/* Minimum Algorithm specific ctrl value */
-
 #  define EVP_MD_CTRL_ALG_CTRL                    0x1000
 
-# endif                         /* !EVP_MD */
+# endif                           
 
-/* values for EVP_MD_CTX flags */
+# define EVP_MD_CTX_FLAG_ONESHOT         0x0001    
+# define EVP_MD_CTX_FLAG_CLEANED         0x0002    
+# define EVP_MD_CTX_FLAG_REUSE           0x0004    
+# define EVP_MD_CTX_FLAG_NON_FIPS_ALLOW  0x0008     
+# define EVP_MD_CTX_FLAG_PAD_MASK        0xF0     
+# define EVP_MD_CTX_FLAG_PAD_PKCS1       0x00    
+# define EVP_MD_CTX_FLAG_PAD_X931        0x10   
+# define EVP_MD_CTX_FLAG_PAD_PSS         0x20   
 
-# define EVP_MD_CTX_FLAG_ONESHOT         0x0001/* digest update will be
-                                                * called once only */
-# define EVP_MD_CTX_FLAG_CLEANED         0x0002/* context has already been
-                                                * cleaned */
-# define EVP_MD_CTX_FLAG_REUSE           0x0004/* Don't free up ctx->md_data
-                                                * in EVP_MD_CTX_reset */
-/*
- * FIPS and pad options are ignored in 1.0.0, definitions are here so we
- * don't accidentally reuse the values for other purposes.
- */
-
-# define EVP_MD_CTX_FLAG_NON_FIPS_ALLOW  0x0008/* Allow use of non FIPS
-                                                * digest in FIPS mode */
-
-/*
- * The following PAD options are also currently ignored in 1.0.0, digest
- * parameters are handled through EVP_DigestSign*() and EVP_DigestVerify*()
- * instead.
- */
-# define EVP_MD_CTX_FLAG_PAD_MASK        0xF0/* RSA mode to use */
-# define EVP_MD_CTX_FLAG_PAD_PKCS1       0x00/* PKCS#1 v1.5 mode */
-# define EVP_MD_CTX_FLAG_PAD_X931        0x10/* X9.31 mode */
-# define EVP_MD_CTX_FLAG_PAD_PSS         0x20/* PSS mode */
-
-# define EVP_MD_CTX_FLAG_NO_INIT         0x0100/* Don't initialize md_data */
-/*
- * Some functions such as EVP_DigestSign only finalise copies of internal
- * contexts so additional data can be included after the finalisation call.
- * This is inefficient if this functionality is not required: it is disabled
- * if the following flag is set.
- */
+# define EVP_MD_CTX_FLAG_NO_INIT         0x0100    
 # define EVP_MD_CTX_FLAG_FINALISE        0x0200
-/* NOTE: 0x0400 is reserved for internal usage */
-
 EVP_CIPHER *EVP_CIPHER_meth_new(int cipher_type, int block_size, int key_len);
 EVP_CIPHER *EVP_CIPHER_meth_dup(const EVP_CIPHER *cipher);
 void EVP_CIPHER_meth_free(EVP_CIPHER *cipher);
@@ -228,10 +178,6 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
                                                           int type, int arg,
                                                           void *ptr);
 
-/* Values for cipher flags */
-
-/* Modes for ciphers */
-
 # define         EVP_CIPH_STREAM_CIPHER          0x0
 # define         EVP_CIPH_ECB_MODE               0x1
 # define         EVP_CIPH_CBC_MODE               0x2
@@ -244,49 +190,25 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 # define         EVP_CIPH_WRAP_MODE              0x10002
 # define         EVP_CIPH_OCB_MODE               0x10003
 # define         EVP_CIPH_MODE                   0xF0007
-/* Set if variable length cipher */
 # define         EVP_CIPH_VARIABLE_LENGTH        0x8
-/* Set if the iv handling should be done by the cipher itself */
 # define         EVP_CIPH_CUSTOM_IV              0x10
-/* Set if the cipher's init() function should be called if key is NULL */
 # define         EVP_CIPH_ALWAYS_CALL_INIT       0x20
-/* Call ctrl() to init cipher parameters */
 # define         EVP_CIPH_CTRL_INIT              0x40
-/* Don't use standard key length function */
 # define         EVP_CIPH_CUSTOM_KEY_LENGTH      0x80
-/* Don't use standard block padding */
 # define         EVP_CIPH_NO_PADDING             0x100
-/* cipher handles random key generation */
 # define         EVP_CIPH_RAND_KEY               0x200
-/* cipher has its own additional copying logic */
 # define         EVP_CIPH_CUSTOM_COPY            0x400
-/* Don't use standard iv length function */
 # define         EVP_CIPH_CUSTOM_IV_LENGTH       0x800
-/* Allow use default ASN1 get/set iv */
 # define         EVP_CIPH_FLAG_DEFAULT_ASN1      0x1000
-/* Buffer length in bits not bytes: CFB1 mode only */
 # define         EVP_CIPH_FLAG_LENGTH_BITS       0x2000
-/* Note if suitable for use in FIPS mode */
 # define         EVP_CIPH_FLAG_FIPS              0x4000
-/* Allow non FIPS cipher in FIPS mode */
 # define         EVP_CIPH_FLAG_NON_FIPS_ALLOW    0x8000
-/*
- * Cipher handles any and all padding logic as well as finalisation.
- */
 # define         EVP_CIPH_FLAG_CUSTOM_CIPHER     0x100000
 # define         EVP_CIPH_FLAG_AEAD_CIPHER       0x200000
 # define         EVP_CIPH_FLAG_TLS1_1_MULTIBLOCK 0x400000
-/* Cipher can handle pipeline operations */
 # define         EVP_CIPH_FLAG_PIPELINE          0X800000
 
-/*
- * Cipher context flag to indicate we can handle wrap mode: if allowed in
- * older applications it could overflow buffers.
- */
-
 # define         EVP_CIPHER_CTX_FLAG_WRAP_ALLOW  0x1
-
-/* ctrl() values */
 
 # define         EVP_CTRL_INIT                   0x0
 # define         EVP_CTRL_SET_KEY_LENGTH         0x1
@@ -312,15 +234,8 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 # define         EVP_CTRL_CCM_SET_IV_FIXED       EVP_CTRL_AEAD_SET_IV_FIXED
 # define         EVP_CTRL_CCM_SET_L              0x14
 # define         EVP_CTRL_CCM_SET_MSGLEN         0x15
-/*
- * AEAD cipher deduces payload length and returns number of bytes required to
- * store MAC and eventual padding. Subsequent call to EVP_Cipher even
- * appends/verifies MAC.
- */
 # define         EVP_CTRL_AEAD_TLS1_AAD          0x16
-/* Used by composite AEAD ciphers, no-op in GCM, CCM... */
 # define         EVP_CTRL_AEAD_SET_MAC_KEY       0x17
-/* Set the GCM invocation field, decrypt only */
 # define         EVP_CTRL_GCM_SET_IV_INV         0x18
 
 # define         EVP_CTRL_TLS1_1_MULTIBLOCK_AAD  0x19
@@ -330,37 +245,23 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 
 # define         EVP_CTRL_SSL3_MASTER_SECRET             0x1d
 
-/* EVP_CTRL_SET_SBOX takes the char * specifying S-boxes */
 # define         EVP_CTRL_SET_SBOX                       0x1e
-/*
- * EVP_CTRL_SBOX_USED takes a 'size_t' and 'char *', pointing at a
- * pre-allocated buffer with specified size
- */
 # define         EVP_CTRL_SBOX_USED                      0x1f
-/* EVP_CTRL_KEY_MESH takes 'size_t' number of bytes to mesh the key after,
- * 0 switches meshing off
- */
 # define         EVP_CTRL_KEY_MESH                       0x20
-/* EVP_CTRL_BLOCK_PADDING_MODE takes the padding mode */
 # define         EVP_CTRL_BLOCK_PADDING_MODE             0x21
 
-/* Set the output buffers to use for a pipelined operation */
 # define         EVP_CTRL_SET_PIPELINE_OUTPUT_BUFS       0x22
-/* Set the input buffers to use for a pipelined operation */
 # define         EVP_CTRL_SET_PIPELINE_INPUT_BUFS        0x23
-/* Set the input buffer lengths to use for a pipelined operation */
 # define         EVP_CTRL_SET_PIPELINE_INPUT_LENS        0x24
 
 # define         EVP_CTRL_GET_IVLEN                      0x25
 
-/* Padding modes */
 #define EVP_PADDING_PKCS7       1
 #define EVP_PADDING_ISO7816_4   2
 #define EVP_PADDING_ANSI923     3
 #define EVP_PADDING_ISO10126    4
 #define EVP_PADDING_ZERO        5
 
-/* RFC 5246 defines additional data to be 13 bytes in length */
 # define         EVP_AEAD_TLS1_AAD_LEN           13
 
 typedef struct {
@@ -370,27 +271,16 @@ typedef struct {
     unsigned int interleave;
 } EVP_CTRL_TLS1_1_MULTIBLOCK_PARAM;
 
-/* GCM TLS constants */
-/* Length of fixed part of IV derived from PRF */
 # define EVP_GCM_TLS_FIXED_IV_LEN                        4
-/* Length of explicit part of IV part of TLS records */
 # define EVP_GCM_TLS_EXPLICIT_IV_LEN                     8
-/* Length of tag for TLS */
 # define EVP_GCM_TLS_TAG_LEN                             16
 
-/* CCM TLS constants */
-/* Length of fixed part of IV derived from PRF */
 # define EVP_CCM_TLS_FIXED_IV_LEN                        4
-/* Length of explicit part of IV part of TLS records */
 # define EVP_CCM_TLS_EXPLICIT_IV_LEN                     8
-/* Total length of CCM IV length for TLS */
 # define EVP_CCM_TLS_IV_LEN                              12
-/* Length of tag for TLS */
 # define EVP_CCM_TLS_TAG_LEN                             16
-/* Length of CCM8 tag for TLS */
 # define EVP_CCM8_TLS_TAG_LEN                            8
 
-/* Length of tag for TLS */
 # define EVP_CHACHAPOLY_TLS_TAG_LEN                      16
 
 typedef struct evp_cipher_info_st {
@@ -399,7 +289,6 @@ typedef struct evp_cipher_info_st {
 } EVP_CIPHER_INFO;
 
 
-/* Password based encryption function */
 typedef int (EVP_PBE_KEYGEN) (EVP_CIPHER_CTX *ctx, const char *pass,
                               int passlen, ASN1_TYPE *param,
                               const EVP_CIPHER *cipher, const EVP_MD *md,
@@ -434,7 +323,6 @@ typedef int (EVP_PBE_KEYGEN) (EVP_CIPHER_CTX *ctx, const char *pass,
                                         (char *)(polykey))
 # endif
 
-/* Add some extra combinations */
 # define EVP_get_digestbynid(a) EVP_get_digestbyname(OBJ_nid2sn(a))
 # define EVP_get_digestbyobj(a) EVP_get_digestbynid(OBJ_obj2nid(a))
 # define EVP_get_cipherbynid(a) EVP_get_cipherbyname(OBJ_nid2sn(a))
@@ -521,7 +409,7 @@ void BIO_set_md(BIO *, const EVP_MD *md);
 # define BIO_get_cipher_ctx(b,c_pp) BIO_ctrl(b,BIO_C_GET_CIPHER_CTX,0, \
                                              (char *)(c_pp))
 
-/*__owur*/ int EVP_Cipher(EVP_CIPHER_CTX *c,
+ int EVP_Cipher(EVP_CIPHER_CTX *c,
                           unsigned char *out,
                           const unsigned char *in, unsigned int inl);
 
@@ -579,34 +467,34 @@ int EVP_CIPHER_CTX_test_flags(const EVP_CIPHER_CTX *ctx, int flags);
 
 __owur int EVP_EncryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                            const unsigned char *key, const unsigned char *iv);
-/*__owur*/ int EVP_EncryptInit_ex(EVP_CIPHER_CTX *ctx,
+ int EVP_EncryptInit_ex(EVP_CIPHER_CTX *ctx,
                                   const EVP_CIPHER *cipher, ENGINE *impl,
                                   const unsigned char *key,
                                   const unsigned char *iv);
-/*__owur*/ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out,
                                  int *outl, const unsigned char *in, int inl);
-/*__owur*/ int EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ int EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out,
                                    int *outl);
-/*__owur*/ int EVP_EncryptFinal(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ int EVP_EncryptFinal(EVP_CIPHER_CTX *ctx, unsigned char *out,
                                 int *outl);
 
 __owur int EVP_DecryptInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                            const unsigned char *key, const unsigned char *iv);
-/*__owur*/ int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx,
+ int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx,
                                   const EVP_CIPHER *cipher, ENGINE *impl,
                                   const unsigned char *key,
                                   const unsigned char *iv);
-/*__owur*/ int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out,
                                  int *outl, const unsigned char *in, int inl);
 __owur int EVP_DecryptFinal(EVP_CIPHER_CTX *ctx, unsigned char *outm,
                             int *outl);
-/*__owur*/ int EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *outm,
+ int EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *outm,
                                    int *outl);
 
 __owur int EVP_CipherInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                           const unsigned char *key, const unsigned char *iv,
                           int enc);
-/*__owur*/ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx,
+ int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx,
                                  const EVP_CIPHER *cipher, ENGINE *impl,
                                  const unsigned char *key,
                                  const unsigned char *iv, int enc);
@@ -631,7 +519,7 @@ __owur int EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret,
                             size_t siglen, const unsigned char *tbs,
                             size_t tbslen);
 
-/*__owur*/ int EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
+ int EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY_CTX **pctx,
                                   const EVP_MD *type, ENGINE *e,
                                   EVP_PKEY *pkey);
 __owur int EVP_DigestSignFinal(EVP_MD_CTX *ctx, unsigned char *sigret,
@@ -731,7 +619,7 @@ const EVP_MD *EVP_whirlpool(void);
 # ifndef OPENSSL_NO_SM3
 const EVP_MD *EVP_sm3(void);
 # endif
-const EVP_CIPHER *EVP_enc_null(void); /* does nothing :-) */
+const EVP_CIPHER *EVP_enc_null(void);     
 # ifndef OPENSSL_NO_DES
 const EVP_CIPHER *EVP_des_ecb(void);
 const EVP_CIPHER *EVP_des_ede(void);
@@ -756,11 +644,6 @@ const EVP_CIPHER *EVP_des_ede_cbc(void);
 const EVP_CIPHER *EVP_des_ede3_cbc(void);
 const EVP_CIPHER *EVP_desx_cbc(void);
 const EVP_CIPHER *EVP_des_ede3_wrap(void);
-/*
- * This should now be supported through the dev_crypto ENGINE. But also, why
- * are rc4 and md5 declarations made here inside a "NO_DES" precompiler
- * branch?
- */
 # endif
 # ifndef OPENSSL_NO_RC4
 const EVP_CIPHER *EVP_rc4(void);
@@ -1072,15 +955,12 @@ size_t EVP_PKEY_get1_tls_encodedpoint(EVP_PKEY *pkey, unsigned char **ppt);
 
 int EVP_CIPHER_type(const EVP_CIPHER *ctx);
 
-/* calls methods */
 int EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
 int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
 
-/* These are used by EVP_CIPHER methods */
 int EVP_CIPHER_set_asn1_iv(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
 int EVP_CIPHER_get_asn1_iv(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
 
-/* PKCS5 password based encryption */
 int PKCS5_PBE_keyivgen(EVP_CIPHER_CTX *ctx, const char *pass, int passlen,
                        ASN1_TYPE *param, const EVP_CIPHER *cipher,
                        const EVP_MD *md, int en_de);
@@ -1110,13 +990,8 @@ void PKCS5_PBE_add(void);
 int EVP_PBE_CipherInit(ASN1_OBJECT *pbe_obj, const char *pass, int passlen,
                        ASN1_TYPE *param, EVP_CIPHER_CTX *ctx, int en_de);
 
-/* PBE type */
-
-/* Can appear as the outermost AlgorithmIdentifier */
 # define EVP_PBE_TYPE_OUTER      0x0
-/* Is an PRF type OID */
 # define EVP_PBE_TYPE_PRF        0x1
-/* Is a PKCS#5 v2.0 KDF */
 # define EVP_PBE_TYPE_KDF        0x2
 
 int EVP_PBE_alg_add_type(int pbe_type, int pbe_nid, int cipher_nid,
@@ -1303,7 +1178,6 @@ void EVP_PKEY_asn1_set_security_bits(EVP_PKEY_ASN1_METHOD *ameth,
 
 # define EVP_PKEY_CTRL_DIGESTINIT        7
 
-/* Used by GOST key encryption in TLS */
 # define EVP_PKEY_CTRL_SET_IV            8
 
 # define EVP_PKEY_CTRL_CMS_ENCRYPT       9
@@ -1319,9 +1193,6 @@ void EVP_PKEY_asn1_set_security_bits(EVP_PKEY_ASN1_METHOD *ameth,
 # define EVP_PKEY_ALG_CTRL               0x1000
 
 # define EVP_PKEY_FLAG_AUTOARGLEN        2
-/*
- * Method handles all operations: don't assume any digest related defaults.
- */
 # define EVP_PKEY_FLAG_SIGCTX_CUSTOM     4
 
 const EVP_PKEY_METHOD *EVP_PKEY_meth_find(int type);
