@@ -19,3 +19,5 @@ Once you've done that run **https.exe**
 ![image](https://user-images.githubusercontent.com/89754898/213895072-982697aa-0eef-4ff6-aae0-fbadb250a3cf.png)
 
 01.01.04 - added filesystem and improved data
+
+01.01.05 - decreased file size of HTTPS header
