@@ -8,6 +8,7 @@
 #include "httplib.h"
 #include "json.hpp"
 #include <future>
+#include <filesystem>
 httplib::SSLServer server("cert.pem", "key.pem");
 using namespace std;
 using req = httplib::Request;
@@ -103,6 +104,12 @@ bool request(const req req, res res)
 }
 int main()
 {
+	for (const auto &i : filesystem::directory_iterator("./connection/")) {
+		if (not filesystem::is_directory(i.path())) {
+			connection data = LoadConnectionData(i.path().filename().string());
+			connection_data.emplace(i.path().filename().string(), data);
+		}
+	}
 	server.Post(("/growtopia/server_data.php"), [&](const req& req, res& res) {
 		future<bool> Request = async(request, req, res); Request.wait();
 	if (not Request.get()) {
