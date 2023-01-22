@@ -22,6 +22,7 @@ Once you've done that run **https.exe**
 
 # Change log
 01.01.02 - removed redundant code
+
 01.01.03 - Console Logging
 
-![image](https://user-images.githubusercontent.com/89754898/213895030-5cf61c6b-8a30-499c-9ff4-430668941257.png)
+![image](https://user-images.githubusercontent.com/89754898/213895072-982697aa-0eef-4ff6-aae0-fbadb250a3cf.png)
