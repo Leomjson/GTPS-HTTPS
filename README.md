@@ -8,6 +8,7 @@ Build in Visual studio 2022 in x64/release  (Download Visual Studio: https://vis
 ## Done Building?
 Go to **x64/release** folder, then create a folder called **connection**, This folder will log connection information.
 Then go back to **x64/release** folder and copy and paste the content(s) in **DLL** folder and paste it inside the **x64/release** folder.
+Do the same with **certificate** folder, copy and paste the content(s) and paste in **x64/release**
 Once you've done that run **https.exe**
 
 # Change log
