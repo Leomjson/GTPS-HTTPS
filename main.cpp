@@ -1,19 +1,13 @@
-/*
-	HTTPS with connection control
-   !! ports are still vulnerable !!
-   ~ Comments, code was made by LeomJson (leo)
-   HTTPS Credibility: https://github.com/yhirose/cpp-httplib
-*/
 #include "httplib.hpp"
 #include "json.hpp"
 #include <future>
 #include <filesystem>
-httplib::SSLServer server("cert.pem", "key.pem");
 using namespace std;
+httplib::SSLServer server("cert.pem", "key.pem");
 vector<thread> backtasks;
 
-#define r_seconds 4  
-#define requests 3        
+#define r_seconds 4
+#define requests 3
 
 const char* server_data =
 R"(server|127.0.0.1
@@ -21,13 +15,14 @@ port|55231
 type|1
 meta|cmeta
 RTENDMARKERBS1001)";
-const char* gov = 
+const char* gov =
 R"(<style>h1 { text-align: center; }
 </style>
 <body>
 <h1><b><big>Unauthorized Access</big></b></h1>
 </body>)";
-class connection { public:
+class connection {
+public:
 	string ip = "";
 	int attempts = 0;
 };
