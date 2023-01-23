@@ -21,3 +21,5 @@ Once you've done that run **https.exe**
 01.01.04 - added filesystem and improved data
 
 01.01.05 - decreased file size of HTTPS header
+
+01.01.06 - openssl header files renamed to **hpp** extention, and optimized file size
