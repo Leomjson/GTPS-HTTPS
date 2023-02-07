@@ -91,6 +91,7 @@ int main()
 {
 	for (const auto& i : filesystem::directory_iterator("./connection/")) if (not filesystem::is_directory(i.path()))
 	{
+		if (i.path().filename().string() == "tmp") continue; // ignore (repository placeholder)
 		connection data = LoadConnectionData(i.path().filename().string());
 		connection_data.emplace(i.path().filename().string(), data);
 	}
