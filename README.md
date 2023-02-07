@@ -2,7 +2,7 @@
 
 ## Building
 Download Visual Studio: https://visualstudio.microsoft.com/vs/
-Then run https.snl and click the **build** tab on the top part of the VS IDE, then click:
+Then run https.sln and click the **build** tab on the top part of the VS IDE, then click:
 
 ![image](https://user-images.githubusercontent.com/89754898/213894642-38242ef9-794d-49ae-a4ac-e13b463a3063.png)
 
