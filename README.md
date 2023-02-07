@@ -20,3 +20,5 @@ Then run https.sln and click the **build** tab on the top part of the VS IDE, th
 01.01.06 - openssl header files renamed to **hpp** extention, and optimized file size
 
 01.01.07 - adding backtask for resetting requests (this'll make connecting more accurate)
+
+01.01.08 - ignore "tmp" a placeholder for the "connection" folder in repository
