@@ -6,7 +6,7 @@ using namespace std;
 httplib::SSLServer server("cert.pem", "key.pem");
 vector<thread> backtasks;
 
-#define r_seconds 2 // TODO: add backtask for resetting requests
+#define r_seconds 4
 #define requests 3
 
 const char* server_data =
@@ -53,8 +53,15 @@ void append_reset(string ip) {
 				data.attempts = it->second.attempts;
 				SaveConnectionData(data, it->second.ip);
 			}
+			else {
+				this_thread::sleep_for(1800ms);
+				it->second.attempts -= 1;
+				connection data = LoadConnectionData(ip);
+				data.attempts = it->second.attempts;
+				SaveConnectionData(data, it->second.ip);
+			}
 		}
-		this_thread::sleep_for(1ms);
+		this_thread::sleep_for(5ms);
 	}
 }
 bool request(const httplib::Request req)
