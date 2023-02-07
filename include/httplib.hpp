@@ -219,9 +219,9 @@ using socket_t = int;
 #endif 
 
 #include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/ssl.h>
-#include <openssl/x509v3.h>
+#include <openssl/evp.hpp>
+#include <openssl/ssl.hpp>
+#include <openssl/x509v3.hpp>
 
 #if defined(_WIN32) && defined(OPENSSL_USE_APPLINK)
 #include <openssl/applink.c>
