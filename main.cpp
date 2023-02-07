@@ -6,7 +6,7 @@ using namespace std;
 httplib::SSLServer server("cert.pem", "key.pem");
 vector<thread> backtasks;
 
-#define r_seconds 4
+#define r_seconds 2 // TODO: add backtask for resetting requests
 #define requests 3
 
 const char* server_data =
