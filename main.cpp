@@ -5,10 +5,6 @@
 using namespace std;
 httplib::SSLServer server("cert.pem", "key.pem");
 vector<thread> backtasks;
-
-#define r_seconds 4
-#define requests 3
-
 const char* server_data =
 R"(server|127.0.0.1
 port|17091
@@ -25,18 +21,19 @@ class connection {
 public:
 	string ip = "";
 	int attempts = 0;
-};
-map<string, connection> connection_data;
+}; map<string, connection> connection_data;
+
 void SaveConnectionData(connection data, string ip) {
+	nlohmann::json j;
 	ofstream w("connection/" + ip);
-	nlohmann::json j; j.dump(1);
+	j.dump(1);
 	j["ip"] = data.ip;
 	j["attempts"] = data.attempts;
 	w << setw(2) << j;
 }
 connection LoadConnectionData(string ip) {
-	ifstream r("connection/" + ip);
-	nlohmann::json j; r >> j;
+	nlohmann::json j;
+	ifstream r("connection/" + ip); r >> j;
 	connection data;
 	data.ip = j["ip"];
 	data.attempts = j["attempts"];
@@ -44,23 +41,22 @@ connection LoadConnectionData(string ip) {
 }
 void append_reset(string ip) {
 	while (true) {
-		for (auto it = connection_data.begin(); it != connection_data.end(); ++it) if (it->first == ip)
-		{
-			if (it->second.attempts > requests) {
-				this_thread::sleep_for(chrono::seconds(r_seconds));
-				it->second.attempts -= requests;
-				connection data = LoadConnectionData(ip);
-				data.attempts = it->second.attempts;
-				SaveConnectionData(data, it->second.ip);
-			}
-			else {
-				this_thread::sleep_for(1800ms);
-				it->second.attempts -= 1;
-				connection data = LoadConnectionData(ip);
-				data.attempts = it->second.attempts;
-				SaveConnectionData(data, it->second.ip);
-			}
-		}
+		for (auto it = connection_data.begin(); it not_eq connection_data.end(); ++it)
+			if (it->first == ip)
+				if (it->second.attempts > 3) {
+					this_thread::sleep_for(4s);
+					it->second.attempts -= 3;
+					connection data = LoadConnectionData(ip);
+					data.attempts = it->second.attempts;
+					SaveConnectionData(data, it->second.ip);
+				}
+				else {
+					this_thread::sleep_for(1800ms);
+					it->second.attempts -= 1;
+					connection data = LoadConnectionData(ip);
+					data.attempts = it->second.attempts;
+					SaveConnectionData(data, it->second.ip);
+				}
 		this_thread::sleep_for(5ms);
 	}
 }
@@ -74,10 +70,10 @@ bool request(const httplib::Request req)
 		SaveConnectionData(new_data, req.remote_addr);
 		connection_data.emplace(req.remote_addr, new_data);
 	}
-	else for (auto it = connection_data.begin(); it != connection_data.end(); ++it) if (it->first == req.remote_addr)
+	else for (auto it = connection_data.begin(); it not_eq connection_data.end(); ++it) if (it->first == req.remote_addr)
 	{
 		it->second.attempts++;
-		if (it->second.attempts > requests) {
+		if (it->second.attempts > 3) {
 			backtasks.emplace_back(append_reset, req.remote_addr);
 			return false;
 		}
@@ -89,13 +85,11 @@ bool request(const httplib::Request req)
 }
 int main()
 {
-	for (const auto& i : filesystem::directory_iterator("./connection/")) if (not filesystem::is_directory(i.path()))
-	{
-		if (i.path().filename().string() == "tmp") continue; // ignore (repository placeholder)
-		connection data = LoadConnectionData(i.path().filename().string());
-		connection_data.emplace(i.path().filename().string(), data);
+	for (const auto& i : filesystem::directory_iterator("./connection/")) {
+		if (i.path().filename().string() == "tmp" or filesystem::is_directory(i.path())) continue;
+		connection_data.emplace(i.path().filename().string(), LoadConnectionData(i.path().filename().string()));
 	}
-	server.Post(("/growtopia/server_data.php"), [&](const httplib::Request& req, httplib::Response& res) {
+	server.Post(("/growtopia/server_data.php"), [&](const auto& req, auto& res) {
 		future<bool> Request = async(request, req); Request.wait();
 	if (not Request.get()) {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
@@ -108,8 +102,7 @@ int main()
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 	res.set_content(server_data, "text/plain");
 		});
-	server.Get(("/growtopia/server_data.php"), [&](const httplib::Request& req, httplib::Response& res) { res.set_content(gov, "text/html"); });
-	server.Get(("/cache"), [&](const httplib::Request& req, httplib::Response& res) { res.set_content(gov, "text/html"); });
+	server.Get(("/growtopia/server_data.php"), [&](const auto& req, auto& res) { res.set_content(gov, "text/html"); });
 	server.listen("0.0.0.0", 443);
 	return 0;
 }
