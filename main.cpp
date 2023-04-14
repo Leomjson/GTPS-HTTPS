@@ -51,6 +51,7 @@ void append_reset(string ip) {
 					SaveConnectionData(data, it->second.ip);
 				}
 				else {
+					if (it->second.attempts <= 0) continue; // skip
 					this_thread::sleep_for(1800ms);
 					it->second.attempts -= 1;
 					connection data = LoadConnectionData(ip);
